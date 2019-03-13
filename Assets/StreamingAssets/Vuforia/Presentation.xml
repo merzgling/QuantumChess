@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="download1" size="1.000000 0.701493" />
+    <ImageTarget name="example_5-star_grayscale" size="1.000000 0.700000" />
+    <ImageTarget name="download" size="1.000000 0.701493" />
+    <ImageTarget name="photo_2018-08-20_20-56-22" size="1.000000 0.980000" />
+    <ImageTarget name="vuforia" size="1.000000 0.562500" />
+    <ImageTarget name="heartheart" size="1.000000 1.000000" />
+  </Tracking>
+</QCARConfig>
