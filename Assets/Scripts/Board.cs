@@ -12,6 +12,7 @@ public class Board : MonoBehaviour
     public List<Field> field;
     public List<Piece> piece;
     public List<Rule> rule;
+    private List<SuperPosition> superPosition = new List<SuperPosition>();
 
     protected Field[][] map;
     protected int width = 0;
@@ -101,5 +102,13 @@ public class Board : MonoBehaviour
     {
         piece.Remove(p);
         Destroy(p.gameObject);
+    }
+
+    private void DoAction(Field f1, Field f2)
+    {
+        foreach(var s in superPosition)
+        {
+            
+        }
     }
 }
