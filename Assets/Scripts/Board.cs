@@ -12,7 +12,7 @@ public class Board : MonoBehaviour
     public List<Field> field;
     public List<Piece> piece;
     public List<Rule> rule;
-    private List<SuperPosition> superPosition = new List<SuperPosition>();
+    public List<SuperPosition> superPosition = new List<SuperPosition>();
 
     protected Field[][] map;
     protected int width = 0;
@@ -70,7 +70,7 @@ public class Board : MonoBehaviour
 
     public bool moveRequest(Piece figure, Field fieldTo)
     {
-        List<Field> FieldsFigureCanMove = figure.movingController.getMoves();
+        List<Field> FieldsFigureCanMove = figure.movingController.getMoves(superPosition[0]);
         if (FieldsFigureCanMove.Contains(fieldTo))
         {
             moveFigure(figure, fieldTo);
@@ -106,9 +106,37 @@ public class Board : MonoBehaviour
 
     private void DoAction(Field f1, Field f2)
     {
-        foreach(var s in superPosition)
+        List<SuperPosition> toMove = new List<SuperPosition>();
+        foreach(var sp in superPosition)
         {
-            
+            if (sp.state[f1] != null)
+                if (sp.state[f1].movingController.IsMovingCorrect(sp, f2))
+                    toMove.Add(sp);
         }
+
+        if (toMove.Count == superPosition.Count)
+        {
+            foreach (var sp in toMove)
+            {
+                sp.DoMovement(f1, f2);
+            }
+            moveFigure(f1.piece, f2);
+        }
+        else
+        {
+            if (toMove.Count > 0)
+            {
+                Piece newPiece = Instantiate(f1.piece);
+                foreach(var sp in toMove)
+                {
+                    sp.emptyField(f1);
+                    sp.StandPiece(newPiece, f2);
+                }
+
+                newPiece.position = f2;
+                f2.piece = newPiece;
+            }
+        }
+        
     }
 }

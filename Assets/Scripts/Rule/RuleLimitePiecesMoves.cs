@@ -31,7 +31,7 @@ public class RuleLimitePiecesMoves : Rule
                 if (Game.Diplomate.get_state(p.color, piece.color) == DiplomateState.Enemy && p != pieceStayOnField)
                 {
                     if (king)
-                    if (p.movingController.getBites().Contains(king.position))
+                    if (p.movingController.getBites(board.superPosition[0]).Contains(king.position))
                     {
                         moveAvailable = false;
                         break;

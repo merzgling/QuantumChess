@@ -10,7 +10,7 @@ public class RuleLimiteKingBiteMoves : Rule
         {
             List<Field> result = new List<Field>();
             foreach (Field f in inFields)
-                if (!piece.movingController.isBitten(f))
+                if (!piece.movingController.isBitten(board.superPosition[0], f))
                     result.Add(f);
             return result;
         }

@@ -26,4 +26,10 @@ public class SuperPosition
         else
             state.Add(f, p);
     }
+
+    public void emptyField(Field f)
+    {
+        if (state.ContainsKey(f))
+            state.Remove(f);
+    }
 }

@@ -10,7 +10,7 @@ public class PawnMovingController : MovingContoller
     [SerializeField]
     protected bool canDoubleMove;
 
-    public override List<Field> getBites()
+    public override List<Field> getBites(SuperPosition sp)
     {
         List<Field> result = new List<Field>();
         Field fieldBite1 = null;
@@ -45,7 +45,7 @@ public class PawnMovingController : MovingContoller
         return result;
     }
 
-    protected override List<Field> getTransfers()
+    protected override List<Field> getTransfers(SuperPosition sp)
     {
         List<Field> result = new List<Field>();
         Field fieldMove = null;
@@ -74,23 +74,23 @@ public class PawnMovingController : MovingContoller
         }
 
         
-        if (!occupied(fieldMove) && fieldMove)
+        if (!occupied(sp, fieldMove) && fieldMove)
         {
             result.Add(fieldMove);
         }
 
-        if (canDoubleMove && !occupied(fieldDoubleMove) && !occupied(fieldMove) && fieldMove && fieldDoubleMove)
+        if (canDoubleMove && !occupied(sp, fieldDoubleMove) && !occupied(sp, fieldMove) && fieldMove && fieldDoubleMove)
         {
             result.Add(fieldDoubleMove);
         }
-        List<Field> biteFields = getBites();
+        List<Field> biteFields = getBites(sp);
 
-        if (canBite(biteFields[0]))
+        if (canBite(sp, biteFields[0]))
         {
             result.Add(biteFields[0]);
         }
 
-        if (canBite(biteFields[1]))
+        if (canBite(sp, biteFields[1]))
         {
             result.Add(biteFields[1]);
         }

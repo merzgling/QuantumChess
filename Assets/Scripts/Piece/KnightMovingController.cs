@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KnightMovingController : MovingContoller
 {
-    public override List<Field> getBites()
+    public override List<Field> getBites(SuperPosition sp)
     {
         List<Field> result = new List<Field>();
         Field field = board.Map(piece.position.x + 1, piece.position.y + 2);
@@ -35,14 +35,14 @@ public class KnightMovingController : MovingContoller
         return result;
     }
 
-    protected override List<Field> getTransfers()
+    protected override List<Field> getTransfers(SuperPosition sp)
     {
         List<Field> result = new List<Field>();
 
-        List<Field> bites = getBites();
+        List<Field> bites = getBites(sp);
         foreach(Field f in bites)
         {
-            if (canMove(f))
+            if (canMove(sp, f))
                 result.Add(f);
         }
 

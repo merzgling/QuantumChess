@@ -91,7 +91,7 @@ public class RuleCastling : Rule
                     Field ff = piece.position;
                     while (ff != f)
                     {
-                        if (piece.movingController.isBitten(ff))
+                        if (piece.movingController.isBitten(board.superPosition[0], ff))
                             can = false;
                         ff = board.Map(ff.x + 1, ff.y);
                     }
@@ -121,7 +121,7 @@ public class RuleCastling : Rule
                     Field ff = piece.position;
                     while (ff != f)
                     {
-                        if (piece.movingController.isBitten(ff))
+                        if (piece.movingController.isBitten(board.superPosition[0], ff))
                             can = false;
                         ff = board.Map(ff.x, ff.y + 1);
                     }
@@ -151,7 +151,7 @@ public class RuleCastling : Rule
                     Field ff = piece.position;
                     while (ff != f)
                     {
-                        if (piece.movingController.isBitten(ff))
+                        if (piece.movingController.isBitten(board.superPosition[0], ff))
                             can = false;
                         ff = board.Map(ff.x - 1, ff.y);
                     }
@@ -181,7 +181,7 @@ public class RuleCastling : Rule
                     Field ff = piece.position;
                     while (ff != f)
                     {
-                        if (piece.movingController.isBitten(ff))
+                        if (piece.movingController.isBitten(board.superPosition[0], ff))
                             can = false;
                         ff = board.Map(ff.x, ff.y - 1);
                     }

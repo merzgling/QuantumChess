@@ -7,14 +7,14 @@ public abstract class MovingContoller : MonoBehaviour
     protected Board board;
     protected Piece piece;
 
-    List<Field> findOutBittenFields()
+    List<Field> findOutBittenFields(SuperPosition sp)
     {
         List<Field> bittenFields = new List<Field>();
-        foreach (Piece p in board.piece)
+        foreach (Piece p in sp.state.Values)
         {
             if (Game.Diplomate.get_state(piece.color, p.color) == DiplomateState.Enemy)
             {
-                List<Field> bit = p.movingController.getBites();
+                List<Field> bit = p.movingController.getBites(sp);
                 foreach (Field f in bit)
                 {
                     bittenFields.Add(f);
@@ -31,12 +31,12 @@ public abstract class MovingContoller : MonoBehaviour
         piece = gameObject.GetComponent<Piece>();
     }
 
-    protected bool canMove(Field field)
+    protected bool canMove(SuperPosition sp, Field field)
     {
         if (field == null)
             return false;
 
-        if (field.piece == null)
+        if (sp.state[field] == null)
             return true;
         else
             if (Game.Diplomate.get_state(field.piece.color, piece.color) == DiplomateState.Enemy)
@@ -44,64 +44,64 @@ public abstract class MovingContoller : MonoBehaviour
         else return false;
     }
 
-    protected bool canMove(int x, int y)
+    protected bool canMove(SuperPosition sp, int x, int y)
     {
-        return canMove(board.Map(x, y));
+        return canMove(sp, board.Map(x, y));
     }
 
-    protected bool canBite(Field field)
+    protected bool canBite(SuperPosition sp, Field field)
     {
         if (field)
-            if (field.piece)
+            if (sp.state[field])
             {
-                if (Game.Diplomate.get_state(field.piece.color, piece.color) == DiplomateState.Enemy)
+                if (Game.Diplomate.get_state(sp.state[field].color, piece.color) == DiplomateState.Enemy)
                     return true;
             }
         return false;
     }
 
-    protected bool canBite(int x, int y)
+    protected bool canBite(SuperPosition sp, int x, int y)
     {
-        return canMove(board.Map(x, y));
+        return canBite(sp, board.Map(x, y));
     }
 
-    protected bool occupied(Field field)
+    protected bool occupied(SuperPosition sp, Field field)
     {
         if (field == null)
             return false;
         else
-            if (field.piece == null)
+            if (sp.state[field] == null)
                 return false;
             else
                 return true;
     }
 
-    protected bool occupied(int x, int y)
+    protected bool occupied(SuperPosition sp, int x, int y)
     {
-        return occupied(board.Map(x, y));
+        return occupied(sp, board.Map(x, y));
     }
 
-    public bool isBitten(Field field)
+    public bool isBitten(SuperPosition sp, Field field)
     {
-        List <Field> bittenFields = findOutBittenFields();
+        List <Field> bittenFields = findOutBittenFields(sp);
         bool result = bittenFields.Contains(field);
         return result;
     }
 
-    public bool isBitten()
+    public bool isBitten(SuperPosition sp)
     {
-        return isBitten(piece.position);
+        return isBitten(sp, piece.position);
     }
 
-    public bool isBitten(int x, int y)
+    public bool isBitten(SuperPosition sp, int x, int y)
     {
-        return isBitten(board.Map(x, y));
+        return isBitten(sp, board.Map(x, y));
     }
 
     // return all fields piece can move
-    public List<Field> getMoves()
+    public List<Field> getMoves(SuperPosition sp)
     {
-        List<Field> result = getTransfers();
+        List<Field> result = getTransfers(sp);
         foreach (Rule rule in board.rule)
         {
             result = rule.onGettingMoves(piece, result);
@@ -109,16 +109,20 @@ public abstract class MovingContoller : MonoBehaviour
 
         return result;
     }
-    
-    // return all fields piece can move
-    protected abstract List<Field> getTransfers();
+
+    protected abstract List<Field> getTransfers(SuperPosition sp);
 
     //return all fields piece can bite
-    public abstract List<Field> getBites();
+    public abstract List<Field> getBites(SuperPosition sp);
 
     // actions must be done with moving piece
     public virtual void OnMove()
     {
         
+    }
+
+    public virtual bool IsMovingCorrect(SuperPosition sp, Field f)
+    {
+        return getMoves(sp).Contains(f);
     }
 }
