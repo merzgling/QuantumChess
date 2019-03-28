@@ -36,10 +36,10 @@ public abstract class MovingContoller : MonoBehaviour
         if (field == null)
             return false;
 
-        if (sp.state[field] == null)
+        if (sp.GetPiece(field) == null)
             return true;
         else
-            if (Game.Diplomate.get_state(field.piece.color, piece.color) == DiplomateState.Enemy)
+            if (Game.Diplomate.get_state(sp.GetPiece(field).color, piece.color) == DiplomateState.Enemy)
             return true;
         else return false;
     }
@@ -52,9 +52,9 @@ public abstract class MovingContoller : MonoBehaviour
     protected bool canBite(SuperPosition sp, Field field)
     {
         if (field)
-            if (sp.state[field])
+            if (sp.GetPiece(field))
             {
-                if (Game.Diplomate.get_state(sp.state[field].color, piece.color) == DiplomateState.Enemy)
+                if (Game.Diplomate.get_state(sp.GetPiece(field).color, piece.color) == DiplomateState.Enemy)
                     return true;
             }
         return false;
@@ -70,7 +70,7 @@ public abstract class MovingContoller : MonoBehaviour
         if (field == null)
             return false;
         else
-            if (sp.state[field] == null)
+            if (sp.GetPiece(field) == null)
                 return false;
             else
                 return true;

@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class SuperPosition
 {
-    public Dictionary<Field, Piece> state = new Dictionary<Field, Piece>(); 
+    public Dictionary<Field, Piece> state = new Dictionary<Field, Piece>();
 
+    public Piece GetPiece(Field f)
+    {
+        if (state.ContainsKey(f))
+            return state[f];
+        return null;
+    }
+    
     public void DoMovement(Field f1, Field f2)
     {
         if (state.ContainsKey(f1))

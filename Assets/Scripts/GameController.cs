@@ -58,7 +58,8 @@ public class GameController : NetworkBehaviour
     {
         unVisualMoves();
         pickedUpPiece = pickedUpObject;
-        movesOfPickedUpPiece = pickedUpPiece.GetComponent<Piece>().movingController.getMoves(board.superPosition[0]);
+        Piece piece = pickedUpPiece.GetComponent<Piece>();
+        movesOfPickedUpPiece = piece.movingController.getMoves(board.superPosition[0]);
         visualMoves();
     }
 

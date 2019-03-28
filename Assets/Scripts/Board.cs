@@ -21,10 +21,10 @@ public class Board : MonoBehaviour
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
             return map[x][y];
-        else return null;
+        return null;
     }
 
-    void initialize()
+    void initializeFields()
     {
         Transform fieldsParent = GameObject.Find("Fields").transform;
         for (int i = 0; i < fieldsParent.childCount; i++)
@@ -49,6 +49,11 @@ public class Board : MonoBehaviour
         {
             map[f.x][f.y] = f;
         }
+    }
+
+    void initialize()
+    {
+        initializeFields();
 
         Transform t = GameObject.Find("Rules").transform;
         for (int i = 0; i < t.childCount; i++)
@@ -61,6 +66,26 @@ public class Board : MonoBehaviour
         {
             piece.Add(t.GetChild(i).gameObject.GetComponent<Piece>());
         }
+
+        foreach (var p in piece)
+        {
+            float a = p.transform.localPosition.x, b = p.transform.localPosition.z;
+            float a1 = Game.Board.x_component.x, a2 = Game.Board.y_component.x;
+            float b1 = Game.Board.x_component.y, b2 = Game.Board.y_component.y;
+
+            float new_x = (a * b2 - a2 * b) / (a1 * b2 - a2 * b1), new_y = (a1 * b - a * b1) / (a1 * b2 - a2 * b1);
+
+            p.position = Game.Board.Map((int)(new_x + 0.5f), (int)(new_y + 0.5f));
+            p.position.piece = p;
+            p.movingController = p.gameObject.GetComponent<MovingContoller>();
+        }
+        
+        SuperPosition startSp = new SuperPosition();
+        foreach (var p in piece)
+        {
+            startSp.state.Add(p.position, p);
+        }
+        superPosition.Add(startSp);
     }
 
     void Awake()
@@ -73,7 +98,7 @@ public class Board : MonoBehaviour
         List<Field> FieldsFigureCanMove = figure.movingController.getMoves(superPosition[0]);
         if (FieldsFigureCanMove.Contains(fieldTo))
         {
-            moveFigure(figure, fieldTo);
+            DoAction(figure.position, fieldTo);
             return true;
         }
         return false;
