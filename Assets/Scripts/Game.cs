@@ -38,4 +38,16 @@ public static class Game
             return board;
         }
     }
+    
+    private static GameOption gameOption;
+    public static GameOption GameOption
+    {
+        get
+        {
+            if (gameOption == null)
+                gameOption = GameObject.Find("Game option").GetComponent<GameOption>();
+
+            return gameOption;
+        }
+    }
 }

@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class GameOption : MonoBehaviour
 {
-    public bool IsQuantum { get; set; }
+    [SerializeField] 
+    public bool IsQuantum;
 }

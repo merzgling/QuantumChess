@@ -6,17 +6,16 @@ using UnityEngine.Networking;
 public class GameController : NetworkBehaviour
 {
     public bool isNetworkGame;
+    [SerializeField] private State _currentState;
+    private BoardVisualizer _visualizer;
 
-    [SerializeField]
-    protected GameObject pickedUpPiece;
-    [SerializeField]
-    protected GameObject pickedUpField;
+    [SerializeField] bool doublePicked;
+    [SerializeField] GameObject pickedUpPiece;
+    [SerializeField] GameObject pickedUpField;
 
     List<Field> movesOfPickedUpPiece;
-    [SerializeField]
-    protected Board board;
-    [SerializeField]
-    List<Player> turnSequance;
+    [SerializeField] Board board;
+    [SerializeField] List<Player> turnSequance;
     int currentTurn;
 
 
@@ -34,29 +33,55 @@ public class GameController : NetworkBehaviour
 
     void visualMoves()
     {
-        if (movesOfPickedUpPiece != null)
-            foreach (Field field in movesOfPickedUpPiece)
-            {
-                if (field.piece)
-                    field.transform.GetChild(0).gameObject.SetActive(true);
-                else
-                    field.transform.GetChild(1).gameObject.SetActive(true);
-            }
+        if (!Game.GameOption.IsQuantum)
+            if (movesOfPickedUpPiece != null)
+                foreach (Field field in movesOfPickedUpPiece)
+                {
+                    if (field.piece)
+                        field.transform.GetChild(0).gameObject.SetActive(true);
+                    else
+                        field.transform.GetChild(1).gameObject.SetActive(true);
+                }
     }
 
     void unVisualMoves()
     {
-        if (movesOfPickedUpPiece != null)
-            foreach (Field field in movesOfPickedUpPiece)
-            {
-                field.transform.GetChild(0).gameObject.SetActive(false);
-                field.transform.GetChild(1).gameObject.SetActive(false);
-            }
+        if (!Game.GameOption.IsQuantum)
+            if (movesOfPickedUpPiece != null)
+                foreach (Field field in movesOfPickedUpPiece)
+                {
+                    field.transform.GetChild(0).gameObject.SetActive(false);
+                    field.transform.GetChild(1).gameObject.SetActive(false);
+                }
+    }
+
+    void ChangeStateToNothingPicked()
+    {
+        
+    }
+    
+    void ChangeStateToPiecePickedOnce()
+    {
+        
+    }
+    
+    void ChangeStateToPiecePickedDouble()
+    {
+        
     }
 
     void pickUpPiece(GameObject pickedUpObject)
     {
         unVisualMoves();
+        if (pickedUpPiece == pickedUpObject)
+            if (doublePicked)
+            {
+                unPickUpPiece();
+            }
+            else
+                doublePicked = true;
+            
+        doublePicked = true;
         pickedUpPiece = pickedUpObject;
         Piece piece = pickedUpPiece.GetComponent<Piece>();
         movesOfPickedUpPiece = piece.movingController.getMoves(board.superPosition[0]);
@@ -75,7 +100,7 @@ public class GameController : NetworkBehaviour
         if (isNetworkGame)
             playerController.CmdSet(pickedUpPiece, pickedUpField);
         else
-            localMoveRequest(pickedUpPiece, pickedUpField);
+            CommonMoveRequest(pickedUpPiece.GetComponent<Piece>(), pickedUpField.GetComponent<Field>());
     }
     
     public void pickUp(GameObject pickedUpObject)
@@ -113,18 +138,24 @@ public class GameController : NetworkBehaviour
     [ClientRpc]
     public void RpcMoveRequest(GameObject pickedUpPiece, GameObject pickedUpField)
     {
-        localMoveRequest(pickedUpPiece, pickedUpField);
+        CommonMoveRequest(pickedUpPiece.GetComponent<Piece>(), pickedUpField.GetComponent<Field>());
     }
 
-    public void localMoveRequest(GameObject pickedUpPiece, GameObject pickedUpField)
+    public void CommonMoveRequest(Piece piece, Field field)
     {
-        Piece piece = pickedUpPiece.GetComponent<Piece>();
-        Field field = pickedUpField.GetComponent<Field>();
         bool result = board.moveRequest(piece, field);
         if (result)
             nextTurn();
         else
-            Debug.LogError("invalid move!");
+            Debug.LogError("invalid common move!");
+    }
+
+    public void QuantumMoveRequest(Piece piece, Field field1, Field field2)
+    {
+        if (board.QuantumMoveRequest(piece, field1, field2))
+            nextTurn();
+        else
+            Debug.LogError("Invalid quantum move");
     }
 
     void nextTurn()
@@ -132,5 +163,12 @@ public class GameController : NetworkBehaviour
         currentTurn++;
         currentTurn %= turnSequance.Count;
         unPickUpPiece();
+    }
+    
+    enum State
+    {
+        NothingPicked,
+        PiecePickedOnce,
+        PiecePickedDouble
     }
 }

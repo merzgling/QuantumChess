@@ -8,6 +8,8 @@ public class Board : MonoBehaviour
 
     public Vector2 x_component = new Vector2(1, 0);
     public Vector2 y_component = new Vector2(0, 1);
+    
+    public GameOption GameOption;
 
     public List<Field> field;
     public List<Piece> piece;
@@ -54,6 +56,8 @@ public class Board : MonoBehaviour
     void initialize()
     {
         initializeFields();
+
+        GameOption = GameObject.Find("Game option").GetComponent<GameOption>();
 
         Transform t = GameObject.Find("Rules").transform;
         for (int i = 0; i < t.childCount; i++)
@@ -163,5 +167,11 @@ public class Board : MonoBehaviour
             }
         }
         
+    }
+
+    public bool QuantumMoveRequest(Piece piece, Field field1, Field field2)
+    {
+
+        return false;
     }
 }
