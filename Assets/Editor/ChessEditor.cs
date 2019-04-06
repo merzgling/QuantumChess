@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
+using UnityStandardAssets.ImageEffects;
 
 public class ChessEditor : EditorWindow
 {
@@ -11,15 +13,22 @@ public class ChessEditor : EditorWindow
     GameObject easyHexField;
     GameObject mediumHexField;
     GameObject hardHexField;
+    
+    GameObject resizebleObject;
+    
+    AnimBool m_ShowExtraFields;
 
     Transform fieldParent;
     int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    float xScale = 0, yScale = 0, zScale = 0;
     bool initialized = false;
 
     void initialization()
     {
         fieldParent = GameObject.Find("Fields").transform;
         initialized = true;
+        m_ShowExtraFields = new AnimBool(true);
+        m_ShowExtraFields.valueChanged.AddListener(Repaint);
     }
 
     [MenuItem("Window/Chess Editor")]
@@ -78,6 +87,26 @@ public class ChessEditor : EditorWindow
         if (GUILayout.Button("Delete all fields"))
         {
             DeleteAllFields();
+        }
+        
+        Object resizebleObjectTemp = resizebleObject;
+        resizebleObjectTemp = EditorGUILayout.ObjectField("Resizable object", resizebleObjectTemp, typeof(GameObject), GUILayout.MinWidth(15));
+
+        resizebleObject = resizebleObjectTemp as GameObject;
+
+        
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("x scale", GUILayout.MinWidth(4));
+        xScale = EditorGUILayout.FloatField(xScale);
+        EditorGUILayout.LabelField("y scale", GUILayout.MinWidth(4));
+        yScale = EditorGUILayout.FloatField(yScale);
+        EditorGUILayout.LabelField("z scale", GUILayout.MinWidth(4));
+        zScale = EditorGUILayout.FloatField(zScale);
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Resize"))
+        {
+            resize(resizebleObject, xScale, yScale, zScale);    
         }
     }
 
@@ -141,6 +170,20 @@ public class ChessEditor : EditorWindow
         for (int i = 0; i < fieldParent.childCount; i++)
         {
             DestroyImmediate(fieldParent.GetChild(i).gameObject);
+        }
+    }
+
+    void resize(GameObject obj, float xScale, float yScale, float zScale)
+    {
+        setScale(obj.transform, xScale,  yScale,  zScale);
+    }
+
+    void setScale(Transform t, float xScale, float yScale, float zScale)
+    {
+        t.localScale = new Vector3(xScale, yScale, zScale);
+        for (int i = 0; i < t.GetChildCount(); i++)
+        {
+            setScale(t.GetChild(i), xScale, yScale, zScale);
         }
     }
 }
