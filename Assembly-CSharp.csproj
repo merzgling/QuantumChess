@@ -142,6 +142,7 @@
     <Compile Include="Assets\Scripts\Piece\MovingContoller.cs" />
     <Compile Include="Assets\Scripts\Piece\PawnMovingController.cs" />
     <Compile Include="Assets\Scripts\Piece\Piece.cs" />
+    <Compile Include="Assets\Scripts\Piece\ProbabilityBar.cs" />
     <Compile Include="Assets\Scripts\Piece\QueenMovingController.cs" />
     <Compile Include="Assets\Scripts\Piece\RookMovingController.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />

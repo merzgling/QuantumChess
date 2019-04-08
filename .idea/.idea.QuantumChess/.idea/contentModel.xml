@@ -312,6 +312,7 @@
             <e p="MovingContoller.cs" t="Include" />
             <e p="PawnMovingController.cs" t="Include" />
             <e p="Piece.cs" t="Include" />
+            <e p="ProbabilityBar.cs" t="Include" />
             <e p="QueenMovingController.cs" t="Include" />
             <e p="RookMovingController.cs" t="Include" />
           </e>

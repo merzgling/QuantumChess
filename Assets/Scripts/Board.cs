@@ -168,6 +168,12 @@ public class Board : MonoBehaviour
         }
         
     }
+   
+    public bool CommonMoveRequest(Piece piece, Field field1, Field field2)
+    {
+
+        return false;
+    }
 
     public bool QuantumMoveRequest(Piece piece, Field field1, Field field2)
     {
