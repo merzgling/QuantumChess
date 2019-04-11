@@ -65,7 +65,7 @@ public abstract class MovingContoller : MonoBehaviour
         return canBite(sp, board.Map(x, y));
     }
 
-    protected bool occupied(SuperPosition sp, Field field)
+    public bool occupied(SuperPosition sp, Field field)
     {
         if (field == null)
             return false;
@@ -76,7 +76,7 @@ public abstract class MovingContoller : MonoBehaviour
                 return true;
     }
 
-    protected bool occupied(SuperPosition sp, int x, int y)
+    public bool occupied(SuperPosition sp, int x, int y)
     {
         return occupied(sp, board.Map(x, y));
     }
@@ -124,5 +124,10 @@ public abstract class MovingContoller : MonoBehaviour
     public virtual bool IsMovingCorrect(SuperPosition sp, Field f)
     {
         return getMoves(sp).Contains(f);
+    }
+
+    public virtual bool IsBittingCorrect(SuperPosition sp, Field f)
+    {
+        return getBites(sp).Contains(f);
     }
 }

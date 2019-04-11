@@ -6,11 +6,13 @@ public class BoardVisualizer : MonoBehaviour
 {
 	[SerializeField] GameObject oncePickedVisualizerTemplate;
 	[SerializeField] GameObject doublePickedVisualizerTemplate;
+	[SerializeField] GameObject FieldPickedVisualizerTemplate;
 
 	[SerializeField] GameObject canMoveFieldTemplate;
 	[SerializeField] GameObject canBiteFieldTemplate;
 	
 	private Piece PickedPiece;
+	private GameObject PickedFieldVisualizer;
 	private GameObject visualizer;
 	private List<GameObject> visualizedFields = new List<GameObject>();
 	
@@ -42,10 +44,18 @@ public class BoardVisualizer : MonoBehaviour
 		PickedPiece = piece;
 	}
 
+	public void SetPickedField(GameObject field)
+	{
+		PickedFieldVisualizer = Instantiate(FieldPickedVisualizerTemplate);
+		PickedFieldVisualizer.transform.position = new Vector3(field.transform.position.x, PickedFieldVisualizer.transform.position.y,  field.transform.position.z);
+	}
+
 	public void UnPickPiece()
 	{
 		if (visualizer)
 			Destroy(visualizer);
+		if (PickedFieldVisualizer)
+			Destroy(PickedFieldVisualizer);
 		unVisualFIelds();
 		PickedPiece = null;
 	}

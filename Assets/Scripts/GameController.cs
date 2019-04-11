@@ -9,7 +9,6 @@ public class GameController : NetworkBehaviour
     [SerializeField] private State _currentState;
     private BoardVisualizer _visualizer;
 
-    [SerializeField] bool doublePicked;
     [SerializeField] GameObject pickedUpPiece;
     [SerializeField] GameObject pickedUpField;
 
@@ -50,6 +49,13 @@ public class GameController : NetworkBehaviour
         pickedUpPiece = piece.gameObject;
         _currentState = State.PiecePickedDouble;
     }
+    
+    void ChangeStateToPiecePickedDoubleWithField(GameObject field)
+    {
+        _visualizer.SetPickedField(field);
+        pickedUpField = field;
+        _currentState = State.PiecePickedDoubleWithField;
+    }
 
     void pickUpPiece(GameObject pickedUpObject)
     {
@@ -79,36 +85,39 @@ public class GameController : NetworkBehaviour
             else
             {
                 pickedUpField = piece.position.gameObject;
-                CmdSentRequest(pickedUpPiece, pickedUpField);
+                if (_currentState == State.PiecePickedOnce)
+                    CmdSentRequestCommonMove(pickedUpPiece, pickedUpField);
+                else if (_currentState == State.PiecePickedDouble)
+                    Debug.LogError("Cant eat in quantum move");//CmdSentRequestQuantumMove(pickedUpPiece, pickedUpField, null);
             }
         }
 
         // pick up field
         if (pickedUpObject.GetComponent<Field>())
-            if (pickedUpPiece)
-            {
-                Field field = pickedUpObject.GetComponent<Field>();
-                if (field)
-                {
-                    pickedUpField = pickedUpObject;
-                    CmdSentRequest(pickedUpPiece, pickedUpField);
-                }
-                if (pickedUpObject.GetComponent<Piece>())
-                    if (Game.Diplomate.get_state(pickedUpObject.GetComponent<Piece>().color, pickedUpPiece.GetComponent<Piece>().color) == DiplomateState.Enemy)
-                    {
-                        pickedUpField = pickedUpObject.GetComponent<Piece>().position.gameObject;
-                        CmdSentRequest(pickedUpPiece, pickedUpField);
-                    }
-                
-            }
+        {
+            if (_currentState == State.PiecePickedOnce)
+                CmdSentRequestCommonMove(pickedUpPiece, pickedUpObject);
+            else if (_currentState == State.PiecePickedDouble)
+                ChangeStateToPiecePickedDoubleWithField(pickedUpObject);
+            else if (_currentState == State.PiecePickedDoubleWithField)
+                CmdSentRequestQuantumMove(pickedUpPiece, pickedUpField, pickedUpObject);
+        }
     }
     
-    void CmdSentRequest(GameObject pickedUpPiece, GameObject pickedUpField)
+    void CmdSentRequestCommonMove(GameObject pickedUpPiece, GameObject pickedUpField)
     {
         if (isNetworkGame)
             playerController.CmdSet(pickedUpPiece, pickedUpField);
         else
             CommonMoveRequest(pickedUpPiece.GetComponent<Piece>(), pickedUpField.GetComponent<Field>());
+    }
+    
+    void CmdSentRequestQuantumMove(GameObject pickedUpPiece, GameObject pickedUpField1, GameObject pickedUpField2)
+    {
+        if (isNetworkGame)
+            playerController.CmdSet(pickedUpPiece, pickedUpField);
+        else
+            QuantumMoveRequest(pickedUpPiece.GetComponent<Piece>(), pickedUpField1.GetComponent<Field>(), pickedUpField2.GetComponent<Field>());
     }
     
     [ClientRpc]
@@ -119,7 +128,7 @@ public class GameController : NetworkBehaviour
 
     public void CommonMoveRequest(Piece piece, Field field)
     {
-        bool result = board.moveRequest(piece, field);
+        bool result = board.CommonMoveRequest(piece, field);
         if (result)
             nextTurn();
         else
@@ -145,6 +154,7 @@ public class GameController : NetworkBehaviour
     {
         NothingPicked,
         PiecePickedOnce,
-        PiecePickedDouble
+        PiecePickedDouble,
+        PiecePickedDoubleWithField
     }
 }
