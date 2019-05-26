@@ -6,4 +6,7 @@ public class GameOption : MonoBehaviour
 {
     [SerializeField] 
     public bool IsQuantum;
+    
+    [SerializeField] 
+    public bool IsMultiplayer;
 }

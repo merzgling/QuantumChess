@@ -55,4 +55,48 @@ public class SuperPosition
         }
         return newSuperposition;
     }
+
+    public bool IsGameOpen()
+    {
+        bool whiteKing = false;
+        bool blackKing = false;
+        foreach (var st in state)
+        {
+            if (st.Value.figureName == "King" && st.Value.color == Colore.White)
+                whiteKing = true;
+            
+            if (st.Value.figureName == "King" && st.Value.color == Colore.Black)
+                blackKing = true;
+        }
+
+        if (whiteKing && blackKing)
+            return true;
+        else
+            return false;
+    }
+
+    public void DestroyKing(Colore c)
+    {
+        Field king = null;
+        foreach (var st in state)
+        {
+            if (st.Value.figureName == "King" && st.Value.color == c)
+                king = st.Key;
+        }
+
+        if (king)
+            emptyField(king);
+    }
+
+    public bool HaveKing(Colore c)
+    {
+        bool result = false;
+        foreach (var st in state)
+        {
+            if (st.Value.figureName == "King" && st.Value.color == c)
+                result = true;
+        }
+
+        return result;
+    }
 }

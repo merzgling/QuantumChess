@@ -128,6 +128,6 @@ public abstract class MovingContoller : MonoBehaviour
 
     public virtual bool IsBittingCorrect(SuperPosition sp, Field f)
     {
-        return getBites(sp).Contains(f);
+        return (getBites(sp).Contains(f) && occupied(sp, f));
     }
 }

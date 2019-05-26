@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEngine.Networking;
 using UnityStandardAssets.ImageEffects;
 
 public class ChessEditor : EditorWindow
@@ -108,6 +109,11 @@ public class ChessEditor : EditorWindow
         {
             resize(resizebleObject, xScale, yScale, zScale);    
         }
+        
+        if (GUILayout.Button("Add network id"))
+        {
+            AddNetworkIdComponent();  
+        }
     }
 
     void createFieldsSquare(int x1, int y1, int x2, int y2)
@@ -184,6 +190,19 @@ public class ChessEditor : EditorWindow
         for (int i = 0; i < t.GetChildCount(); i++)
         {
             setScale(t.GetChild(i), xScale, yScale, zScale);
+        }
+    }
+
+    void AddNetworkIdComponent()
+    {
+        foreach (var obj in  GameObject.FindObjectsOfType<Piece>())
+        {
+            obj.gameObject.AddComponent<NetworkIdentity>();
+        }
+        
+        foreach (var obj in  GameObject.FindObjectsOfType<Field>())
+        {
+            obj.gameObject.AddComponent<NetworkIdentity>();
         }
     }
 }

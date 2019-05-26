@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build;
 using UnityEngine;
+using Vuforia;
 
 public class Board : MonoBehaviour
 {
@@ -135,10 +135,13 @@ public class Board : MonoBehaviour
 
     void RemovePieceFromBoard(Piece piece)
     {
-        if (piece.position)
-            piece.position = null;
-        this.piece.Remove(piece);
-        Destroy(piece.gameObject);
+        if (piece)
+        {
+            if (piece.position)
+                piece.position = null;
+            this.piece.Remove(piece);
+            Destroy(piece.gameObject);
+        }
     }
 
     void SetProbabilityes()
@@ -153,6 +156,8 @@ public class Board : MonoBehaviour
         {
             foreach (var st in sp.state)
             {
+                if (!probability.ContainsKey(st.Value))
+                    probability.Add(st.Value, 0);
                 probability[st.Value]++;
             }
         }
@@ -170,7 +175,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    void ActionAfterMove()
+    void ActionAfterMove(float randomValue)
     {
         Dictionary<Field, Piece> occupiedFields = new Dictionary<Field, Piece>();
         foreach (var f in field)
@@ -209,26 +214,39 @@ public class Board : MonoBehaviour
                     
             }
             
+            
             float t = (float)conflictSuperPositions1.Count / (conflictSuperPositions1.Count + conflictSuperPositions2.Count);
-            if (Random.value >= t)
+            if (randomValue >= t)
             {
                 foreach (var sp in conflictSuperPositions1)
                     superPosition.Remove(sp);
                 RemovePieceFromBoard(conflictSuperPositions1[0].GetPiece(conflictField));
+                conflictSuperPositions2[0].GetPiece(conflictField).position.piece =
+                    conflictSuperPositions2[0].GetPiece(conflictField);
             }
             else
             {
                 foreach (var sp in conflictSuperPositions2)
                     superPosition.Remove(sp);
                 RemovePieceFromBoard(conflictSuperPositions2[0].GetPiece(conflictField));
+                conflictSuperPositions1[0].GetPiece(conflictField).position.piece =
+                    conflictSuperPositions1[0].GetPiece(conflictField);
             }
 
         }
 
         SetProbabilityes();
+
+        int white = CountKings(Colore.White);
+        int black = CountKings(Colore.Black);
+        
+        if (white == 0)
+            Game.GameController.GameOver(1);
+        if (black == 0)
+            Game.GameController.GameOver(0);
     }
    
-    public bool CommonMoveRequest(Piece piece, Field field)
+    public bool CommonMoveRequest(Piece piece, Field field, float randomValue)
     {
         List<SuperPosition> toMove = new List<SuperPosition>();
         Field piecePosition = piece.position;
@@ -273,11 +291,11 @@ public class Board : MonoBehaviour
                 return false;
         }
 
-        ActionAfterMove();
+        ActionAfterMove(randomValue);
         return true;
     }
-
-    public bool QuantumMoveRequest(Piece piece, Field field1, Field field2)
+    
+    bool QuantumSingleMove(Piece piece, Field field1)
     {
         List<SuperPosition> newSuperPositions = new List<SuperPosition>();
         foreach (var sp in superPosition)
@@ -318,7 +336,135 @@ public class Board : MonoBehaviour
         else
             return false;
 
-        ActionAfterMove();
+        ActionAfterMove(Random.value);
         return true;
+    }
+
+    bool QuantumDoubleMove(Piece piece, Field field1, Field field2)
+    {
+        List<SuperPosition> newSuperPositions = new List<SuperPosition>();
+        foreach (var sp in superPosition)
+        {
+            newSuperPositions.Add(sp.Clone());
+        }
+        
+        foreach (var sp in newSuperPositions)
+        {
+            superPosition.Add(sp);
+        }
+        
+        // first move
+        List<SuperPosition> toMove = new List<SuperPosition>();
+        Field piecePosition = piece.position;
+        Field oldPiecePosition = piecePosition;
+        
+        foreach(var sp in newSuperPositions)
+        {
+            if (sp.GetPiece(piecePosition) != null)
+            {
+                if (sp.state[piecePosition].movingController.IsMovingCorrect(sp, field1) &&
+                    !sp.state[piecePosition].movingController.occupied(sp, field1))
+                    toMove.Add(sp);
+            }
+        }
+        
+        if (toMove.Count > 0)
+        {
+            Piece newPiece = Instantiate(piece);
+            foreach(var sp in toMove)
+            {
+                sp.emptyField(piecePosition);
+                sp.StandPiece(newPiece, field1);
+            }
+
+            AddNewPieceOnBoard(newPiece, field1);
+
+            var moveAccepted = new List<SuperPosition>();
+            var moveRejected = new List<SuperPosition>();
+            piecePosition = newPiece.position;
+            
+            foreach (var sp in toMove)
+            {
+                if (sp.GetPiece(piecePosition) != null)
+                {
+                    if (sp.state[piecePosition].movingController.IsMovingCorrect(sp, field2) &&
+                        !sp.state[piecePosition].movingController.occupied(sp, field2))
+                        moveAccepted.Add(sp);
+                    else
+                        moveRejected.Add(sp);
+                }
+                else
+                    moveRejected.Add(sp);
+            }
+            
+            if (moveAccepted.Count > 0)
+            {
+                // окончательное перемещение
+                foreach(var sp in moveAccepted)
+                {
+                    sp.emptyField(piecePosition);
+                    sp.StandPiece(newPiece, field2);
+                }
+
+                moveFigure(newPiece, field2);
+
+                foreach (var sp in moveRejected)
+                {
+                    sp.emptyField(piecePosition);
+                    sp.StandPiece(piece, oldPiecePosition);
+                }
+            }
+            else
+            {
+                RemovePieceFromBoard(newPiece);
+                return false;
+            }
+        }
+        else
+            return false;
+
+        ActionAfterMove(Random.value);
+        return true;
+
+    }
+
+    public bool QuantumMoveRequest(Piece piece, Field field1, Field field2)
+    {
+        if (field1 == field2)
+            return QuantumSingleMove(piece, field1);
+        else
+            return QuantumDoubleMove(piece, field1, field2);
+    }
+
+    public int CountKings(Colore c)
+    {
+        int result = 0;
+        foreach (var sp in superPosition)
+        {
+            if (sp.HaveKing(c))
+                result++;
+        }
+
+        return result;
+    }
+
+    public void Surrender(Colore c)
+    {
+        foreach (var sp in superPosition)
+        {
+            if (sp.IsGameOpen())
+                sp.DestroyKing(c);
+        }
+    }
+
+    public int EndGame(float randomValue)
+    {
+        int white = CountKings(Colore.White);
+        int black = CountKings(Colore.Black);
+
+        if (randomValue < (float) white / (float) (white + black))
+            return 0;
+        else
+            return 1;
     }
 }
