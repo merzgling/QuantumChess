@@ -28,7 +28,7 @@ public class InGameUIController : MonoBehaviour
     {
         GameObject.Find("LobbyManager").GetComponent<LobbyManager>().addPlayerButton.SetActive(true);
         GameObject.Find("LobbyManager").GetComponent<LobbyManager>().GoBackButton();
-        //GameObject.Find("Menu UI").GetComponent<UIController>().SetActiveMainMenu();
+        GameObject.Find("Menu UI").GetComponent<UIController>().SetActiveMainMenu(true);
         //Application.LoadLevel(0);
     }
 

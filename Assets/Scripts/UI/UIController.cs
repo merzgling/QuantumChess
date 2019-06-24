@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public GameObject MainMenu;
+    public List<GameObject> MainMenu;
     
     public GameObject CreateGame;
     public GameObject FindGame;
@@ -41,8 +41,11 @@ public class UIController : MonoBehaviour
             gameObject.GetComponent<Image>().color = new Color(0, 0, 0);*/
     }
 
-    public void SetActiveMainMenu()
+    public void SetActiveMainMenu(bool f)
     {
-        MainMenu.SetActive(true);
+        foreach (var m in MainMenu)
+        {
+            m.SetActive(f);
+        }
     }
 }

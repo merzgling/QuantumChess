@@ -187,7 +187,7 @@ public class ChessEditor : EditorWindow
     void setScale(Transform t, float xScale, float yScale, float zScale)
     {
         t.localScale = new Vector3(xScale, yScale, zScale);
-        for (int i = 0; i < t.GetChildCount(); i++)
+        for (int i = 0; i < t.childCount; i++)
         {
             setScale(t.GetChild(i), xScale, yScale, zScale);
         }

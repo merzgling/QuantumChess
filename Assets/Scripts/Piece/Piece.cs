@@ -20,7 +20,7 @@ public class Piece : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < transform.GetChildCount(); i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
             Transform t = transform.GetChild(i);
             if (t.gameObject.GetComponent<ProbabilityBar>())

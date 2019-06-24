@@ -289,27 +289,6 @@
             </e>
             <e p="READ ME.txt" t="Include" />
           </e>
-          <e p="Vuforia" t="Include">
-            <e p="Editor" t="Include">
-              <e p="Scripts" t="Include">
-                <e p="OpenSourceInitializer.cs" t="Include" />
-              </e>
-            </e>
-            <e p="Scripts" t="Include">
-              <e p="DefaultInitializationErrorHandler.cs" t="Include" />
-              <e p="DefaultTrackableEventHandler.cs" t="Include" />
-            </e>
-            <e p="Shaders" t="Include">
-              <e p="BrightTexture.shader" t="Include" />
-              <e p="CameraDiffuse.shader" t="Include" />
-              <e p="ColoredLines.shader" t="Include" />
-              <e p="DepthContour.shader" t="Include" />
-              <e p="DepthMask.shader" t="Include" />
-              <e p="OutlineOpaque.shader" t="Include" />
-              <e p="Text3D.shader" t="Include" />
-              <e p="VertexLitWithZ.shader" t="Include" />
-            </e>
-          </e>
         </e>
         <e p="NetworkLobby_Third-PartyNotice.txt" t="Include" />
         <e p="Scripts" t="Include">
@@ -353,6 +332,7 @@
             <e p="RuleLimiteKingBiteMoves.cs" t="Include" />
             <e p="RuleLimitePiecesMoves.cs" t="Include" />
           </e>
+          <e p="ScreenOrientier.cs" t="Include" />
           <e p="Server.cs" t="Include" />
           <e p="SuperPosition.cs" t="Include" />
           <e p="Transformation.cs" t="Include" />
@@ -361,6 +341,7 @@
             <e p="ErrorVisualizer.cs" t="Include" />
             <e p="InGameUIController.cs" t="Include" />
             <e p="UIController.cs" t="Include" />
+            <e p="UrlOpener.cs" t="Include" />
           </e>
         </e>
         <e p="StreamingAssets" t="Include">
@@ -371,6 +352,27 @@
             <e p="VuforiaMars_ModelTarget.xml" t="Include" />
             <e p="VuforiaMars_Object_OT.xml" t="Include" />
             <e p="VuforiaMars_VuMark.xml" t="Include" />
+          </e>
+        </e>
+        <e p="Vuforia" t="Include">
+          <e p="Editor" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="OpenSourceInitializer.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Scripts" t="Include">
+            <e p="DefaultInitializationErrorHandler.cs" t="Include" />
+            <e p="DefaultTrackableEventHandler.cs" t="Include" />
+          </e>
+          <e p="Shaders" t="Include">
+            <e p="BrightTexture.shader" t="Include" />
+            <e p="CameraDiffuse.shader" t="Include" />
+            <e p="ColoredLines.shader" t="Include" />
+            <e p="DepthContour.shader" t="Include" />
+            <e p="DepthMask.shader" t="Include" />
+            <e p="OutlineOpaque.shader" t="Include" />
+            <e p="Text3D.shader" t="Include" />
+            <e p="VertexLitWithZ.shader" t="Include" />
           </e>
         </e>
       </e>
